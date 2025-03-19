@@ -1,0 +1,56 @@
+name: Build and Release Firefox Extension
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install web-ext
+      run: npm install --global web-ext
+
+    # The build will need to be signed with MAO before it can be fully loaded.
+    # We can automate this, but the version number needs to be incremented each
+    # time.
+    - name: Build extension
+      run: web-ext build --artifacts-dir ./artifacts
+
+    - name: Delete existing release
+      if: github.event_name == 'push'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release delete main -y || true
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: main
+        release_name: main
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/allchat-1.0.zip
+        asset_name: allchat.zip
+        asset_content_type: application/zip
