@@ -21,11 +21,15 @@ jobs:
     - name: Install web-ext
       run: npm install --global web-ext
 
-    # The build will need to be signed with MAO before it can be fully loaded.
-    # We can automate this, but the version number needs to be incremented each
-    # time.
-    - name: Build extension
-      run: web-ext build --artifacts-dir ./artifacts
+    # Sign & Upload Firefox artifacts
+    - name: Sign and Publish artifact
+      env:
+        FIREFOX_ISSUER: ${{ secrets.FIREFOX_ISSUER }}
+        FIREFOX_SECRET: ${{ secrets.FIREFOX_SECRET }}
+      run: web-ext sign --channel unlisted --artifacts-dir ./artifacts --api-key $FIREFOX_ISSUER --api-secret $FIREFOX_SECRET
+
+    - name: List artifacts directory
+      run: ls -la ./artifacts
 
     - name: Delete existing release
       if: github.event_name == 'push'
