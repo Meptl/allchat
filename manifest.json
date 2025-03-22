@@ -3,6 +3,18 @@
   "name": "AllChat",
   "version": "1.0",
   "description": "Send messages to multiple AI chatbots.",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
+    "default_title": "Open AllChat Options"
+  },
   "permissions": [
     "storage", "webRequest", "webRequestBlocking"
   ],
