@@ -1,6 +1,6 @@
 console.log("Loaded")
 
-console.log(browser.runtime.getManifest());
+// console.log(browser.runtime.getManifest());
 
 const domainInfo = {
     'chatgpt.com': {

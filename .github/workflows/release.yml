@@ -28,9 +28,6 @@ jobs:
         FIREFOX_SECRET: ${{ secrets.FIREFOX_SECRET }}
       run: web-ext sign --channel unlisted --artifacts-dir ./artifacts --api-key $FIREFOX_ISSUER --api-secret $FIREFOX_SECRET
 
-    - name: List artifacts directory
-      run: ls -la ./artifacts
-
     - name: Delete existing release
       if: github.event_name == 'push'
       env:
@@ -49,12 +46,19 @@ jobs:
         draft: false
         prerelease: false
 
+    - name: Find Release Asset
+      id: find_asset
+      run: |
+        ASSET_PATH=$(ls ./artifacts/*.xpi | head -n 1)
+        echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_OUTPUT
+        echo "ASSET_NAME=$(basename ${ASSET_PATH})" >> $GITHUB_OUTPUT
+
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/allchat-1.0.zip
-        asset_name: allchat.zip
+        asset_path: ${{ steps.find_asset.outputs.ASSET_PATH }}
+        asset_name: ${{ steps.find_asset.outputs.ASSET_NAME }}
         asset_content_type: application/zip
