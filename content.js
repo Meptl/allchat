@@ -22,6 +22,16 @@ const domainInfo = {
         textArea: 'textarea#chat-input',
         sendButton: 'div._7436101',
         setMessage: (element, message) => { element.value = message; }
+    },
+    'v0.dev': {
+        textArea: 'textarea#chat-main-textarea',
+        sendButton: 'button[data-testid="prompt-form-send-button"]',
+        setMessage: (element, message) => { element.value = message; }
+    },
+    'lovable.dev': {
+        textArea: 'textarea#chatinput',
+        sendButton: 'button#chatinput-send-message-button',
+        setMessage: (element, message) => { element.value = message; }
     }
 };
 
@@ -47,4 +57,3 @@ window.addEventListener('message', function(event) {
         chatSendButtonElem.click();
     }
 });
-

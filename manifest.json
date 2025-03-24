@@ -15,7 +15,9 @@
     "https://chatgpt.com/*",
     "https://claude.ai/*",
     "https://www.perplexity.ai/*",
-    "https://chat.deepseek.com/*"
+    "https://chat.deepseek.com/*",
+    "https://v0.dev/*",
+    "https://lovable.dev/*"
   ],
   "options_ui": {
     "page": "options.html",
@@ -27,7 +29,9 @@
         "https://chatgpt.com/*",
         "https://claude.ai/*",
         "https://www.perplexity.ai/*",
-        "https://chat.deepseek.com/*"
+        "https://chat.deepseek.com/*",
+        "https://v0.dev/*",
+        "https://lovable.dev/*"
       ],
       "js": ["content.js"],
       "all_frames": true

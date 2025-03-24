@@ -17,7 +17,9 @@ chrome.webRequest.onHeadersReceived.addListener(
           "https://chatgpt.com/*",
           "https://claude.ai/*",
           "https://www.perplexity.ai/*",
-          "https://chat.deepseek.com/*"
+          "https://chat.deepseek.com/*",
+          "https://v0.dev/*",
+          "https://loveable.dev/*"
       ],
     types: ["sub_frame"]
   },
@@ -94,13 +96,28 @@ function saveIframeState() {
     storage.local.set({ iframes: currentIframes });
 }
 
-// Handle general input.
+let keepFocus = false;
+let focusTimeout;
+inputElement.addEventListener('blur', function() {
+    if (!keepFocus) {
+        return;
+    }
+    // Push back this focus by one iteration of the event loop.
+    setTimeout(() => { inputElement.focus(); }, 0);
+});
+
 inputElement.addEventListener('input', function(event) {
+    keepFocus = true;
     const message = event.target.value;
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {
         iframe.contentWindow.postMessage({ type: 'input', message }, '*');
     });
+
+    clearTimeout(focusTimeout);
+    focusTimeout = setTimeout(() => {
+        keepFocus = false;
+    }, 400)
 });
 
 // Handle enter key in input.
