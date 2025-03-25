@@ -102,8 +102,9 @@ inputElement.addEventListener('blur', function() {
     if (!keepFocus) {
         return;
     }
-    // Push back this focus by one iteration of the event loop.
-    setTimeout(() => { inputElement.focus(); }, 0);
+    // We have to wait for the child iframe to steal focus before we can steal
+    // it back.
+    setTimeout(() => { inputElement.focus(); }, 1);
 });
 
 inputElement.addEventListener('input', function(event) {
