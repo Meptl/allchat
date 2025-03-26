@@ -16,8 +16,9 @@ chrome.webRequest.onHeadersReceived.addListener(
       urls: [
           "https://chatgpt.com/*",
           "https://claude.ai/*",
-          "https://www.perplexity.ai/*",
           "https://chat.deepseek.com/*",
+          "https://gemini.google.com/*",
+          "https://www.perplexity.ai/*",
           "https://v0.dev/*",
           "https://loveable.dev/*"
       ],
@@ -98,6 +99,7 @@ function saveIframeState() {
 
 let keepFocus = false;
 let focusTimeout;
+// lovable seems to steal focus everytime you type, so we have to steal it back
 inputElement.addEventListener('blur', function() {
     if (!keepFocus) {
         return;

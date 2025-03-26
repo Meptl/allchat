@@ -23,6 +23,11 @@ const domainInfo = {
         sendButton: 'div._7436101',
         setMessage: (element, message) => { element.value = message; }
     },
+    'gemini.google.com': {
+        textArea: 'div.ql-editor > p',
+        sendButton: 'button[aria-label="Send message"]',
+        setMessage: (element, message) => { element.innerHTML = message; }
+    },
     'v0.dev': {
         textArea: 'textarea#chat-main-textarea',
         sendButton: 'button[data-testid="prompt-form-send-button"]',

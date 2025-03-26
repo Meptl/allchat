@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "AllChat",
-  "version": "1.5",
+  "version": "1.6",
   "description": "Send messages to multiple AI chatbots.",
   "background": {
     "scripts": ["background.js"],
@@ -14,8 +14,9 @@
     "storage", "webRequest", "webRequestBlocking",
     "https://chatgpt.com/*",
     "https://claude.ai/*",
-    "https://www.perplexity.ai/*",
     "https://chat.deepseek.com/*",
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
     "https://v0.dev/*",
     "https://lovable.dev/*"
   ],
@@ -28,8 +29,9 @@
       "matches": [
         "https://chatgpt.com/*",
         "https://claude.ai/*",
-        "https://www.perplexity.ai/*",
         "https://chat.deepseek.com/*",
+        "https://gemini.google.com/*",
+        "https://www.perplexity.ai/*",
         "https://v0.dev/*",
         "https://lovable.dev/*"
       ],
