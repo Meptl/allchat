@@ -3,7 +3,9 @@ name: Build and Release Firefox Extension
 on:
   push:
     tags:
-      - '*' # Trigger on any tag push
+      - '*'
+    branches:
+      - main
 
 jobs:
   build:
@@ -21,8 +23,14 @@ jobs:
     - name: Install web-ext
       run: npm install --global web-ext
 
-    # Sign & Upload Firefox artifacts
-    - name: Sign and Publish artifact
+    # Build unsigned ZIP for main branch pushes
+    - name: Build unsigned artifact (main branch)
+      if: github.ref == 'refs/heads/main'
+      run: web-ext build --overwrite-dest --artifacts-dir ./artifacts
+
+    # Sign & Upload XPI for tag pushes
+    - name: Sign and Publish artifact (tags)
+      if: github.ref_type == 'tag'
       env:
         FIREFOX_ISSUER: ${{ secrets.FIREFOX_ISSUER }}
         FIREFOX_SECRET: ${{ secrets.FIREFOX_SECRET }}
@@ -45,10 +53,11 @@ jobs:
         draft: false
         prerelease: false
 
+    # Find the correct asset (XPI for tags, ZIP for main)
     - name: Find Release Asset
       id: find_asset
       run: |
-        ASSET_PATH=$(ls ./artifacts/*.xpi | head -n 1)
+        ASSET_PATH=$(find ./artifacts -maxdepth 1 \( -name "*.xpi" -o -name "*.zip" \) -print -quit)
         echo "ASSET_PATH=${ASSET_PATH}" >> $GITHUB_OUTPUT
         echo "ASSET_NAME=$(basename ${ASSET_PATH})" >> $GITHUB_OUTPUT
 
