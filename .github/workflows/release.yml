@@ -2,8 +2,8 @@ name: Build and Release Firefox Extension
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*' # Trigger on any tag push
 
 jobs:
   build:
@@ -28,12 +28,11 @@ jobs:
         FIREFOX_SECRET: ${{ secrets.FIREFOX_SECRET }}
       run: web-ext sign --channel unlisted --artifacts-dir ./artifacts --api-key $FIREFOX_ISSUER --api-secret $FIREFOX_SECRET
 
-    - name: Delete existing release
-      if: github.event_name == 'push'
+    - name: Delete existing release tagged with this commit (if any)
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release delete main -y || true
+        gh release delete ${{ github.ref_name }} -y || true
 
     - name: Create Release
       id: create_release
@@ -41,8 +40,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: main
-        release_name: main
+        tag_name: ${{ github.ref_name }}
+        release_name: ${{ github.ref_name }}
         draft: false
         prerelease: false
 
