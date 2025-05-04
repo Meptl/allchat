@@ -36,11 +36,23 @@ jobs:
         FIREFOX_SECRET: ${{ secrets.FIREFOX_SECRET }}
       run: web-ext sign --channel unlisted --artifacts-dir ./artifacts --api-key $FIREFOX_ISSUER --api-secret $FIREFOX_SECRET
 
-    - name: Delete existing release tagged with this commit (if any)
+    # Delete previous release (tag or main)
+    - name: Delete existing release
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release delete ${{ github.ref_name }} -y || true
+        RELEASE_TAG=""
+        if [[ "${{ github.ref_type }}" == "tag" ]]; then
+          RELEASE_TAG="${{ github.ref_name }}"
+        elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          RELEASE_TAG="main"
+        fi
+        if [[ -n "$RELEASE_TAG" ]]; then
+          echo "Deleting release $RELEASE_TAG"
+          gh release delete $RELEASE_TAG -y || true
+        else
+          echo "Not a tag or main branch push, skipping release deletion."
+        fi
 
     - name: Create Release
       id: create_release
@@ -48,10 +60,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref_name }}
-        release_name: ${{ github.ref_name }}
+        # Use tag name for tags, 'main' for main branch
+        tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'main' }}
+        # Use tag name for tags, 'main' for main branch release name
+        release_name: ${{ github.ref_type == 'tag' && github.ref_name || 'main' }}
+        # Use latest commit message for main branch body, default (tag message) for tags
+        body: ${{ github.ref == 'refs/heads/main' && github.event.head_commit.message || '' }}
         draft: false
-        prerelease: false
+        # Mark main branch releases as pre-release, tags as full releases
+        prerelease: ${{ github.ref == 'refs/heads/main' }}
+        # Mark tagged releases as 'latest', main branch release not
+        latest: ${{ github.ref_type == 'tag' }}
 
     # Find the correct asset (XPI for tags, ZIP for main)
     - name: Find Release Asset
@@ -69,4 +88,5 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.find_asset.outputs.ASSET_PATH }}
         asset_name: ${{ steps.find_asset.outputs.ASSET_NAME }}
-        asset_content_type: application/zip
+        # Use correct content type based on file extension
+        asset_content_type: ${{ endsWith(steps.find_asset.outputs.ASSET_NAME, '.xpi') && 'application/x-xpinstall' || 'application/zip' }}
