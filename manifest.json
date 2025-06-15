@@ -23,6 +23,9 @@
     "https://v0.dev/*",
     "https://lovable.dev/*"
   ],
+  "omnibox": {
+    "keyword": "ac"
+  },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
