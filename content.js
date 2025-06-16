@@ -10,7 +10,7 @@ const domainInfo = {
     },
     'claude.ai': {
         textArea: '.ProseMirror > p',
-        sendButton: 'button[aria-label="Send Message"]',
+        sendButton: 'button[aria-label="Send message"]',
         setMessage: (element, message) => { element.innerHTML = message; }
     },
     'www.perplexity.ai': {
