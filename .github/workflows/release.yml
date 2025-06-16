@@ -23,6 +23,11 @@ jobs:
     - name: Install web-ext
       run: npm install --global web-ext
 
+    # Update version in manifest.json for tag builds
+    - name: Update manifest version from tag
+      if: github.ref_type == 'tag'
+      run: sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${{ github.ref_name }}\"/" manifest.json
+
     # Build unsigned ZIP for main branch pushes
     - name: Build unsigned artifact (main branch)
       if: github.ref == 'refs/heads/main'
