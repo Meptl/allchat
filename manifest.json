@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
   "name": "AllChat",
-  "version": "1.7",
+  // This is automatically updated to match git tag during CI/CD
+  "version": "0.0.0.1",
   "description": "Send messages to multiple AI chatbots.",
   "background": {
     "scripts": ["background.js"],
