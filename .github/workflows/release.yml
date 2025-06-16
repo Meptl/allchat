@@ -25,7 +25,8 @@ jobs:
 
     - name: Update manifest version from tag
       if: github.ref_type == 'tag'
-      run: sed -i "s/\"version\": \"0.0.0.1\"/\"version\": \"${{ github.ref_name }}\"/" manifest.json
+      run: |
+        sed -i 's/"version": "0.0.0.1"/"version": "'"${{ github.ref_name }}"'"/' manifest.json
 
     # Build unsigned ZIP for main branch pushes
     - name: Build unsigned artifact (main branch)
